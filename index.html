@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator Deposito</title>
+    <style>
+:root {
+        --primary: #2563eb;
+        --secondary: #f1f5f9;
+        --text: #1e293b;
+        --border: #e2e8f0;
+        --error: #dc2626;
+        --radius: 12px;
+    }
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background: #f9fafb;
+            padding: 40px 16px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            max-width: 520px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.7rem;
+            margin-bottom: 1.8rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 0.7rem;
+            font-size: 1rem;
+            border-radius: var(--radius);
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+        input, select {
+            border: 1px solid var(--border);
+            background: #fff;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+        button {
+            padding: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            background: var(--primary);
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #1e40af;
+        }
+        .button {
+            background-color: #16a34a;
+        }
+        .result-box {
+            margin-top: 1.8rem;
+            padding: 1.2rem;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+        }
+        .result-box p {
+            margin: 0.5rem 0;
+        }
+        .result-box strong {
+            color: var(--primary);
+        }
+        .error {
+            color: var(--error);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .modal-content input {
+            font-size: 1.1rem;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .modal-buttons .btn-close {
+            background: var(--error);
+        }
+        .modal-buttons .btn-close:hover {
+            background: #b91c1c;
+        }
+        .modal-result {
+            margin-top: 15px;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+        }
+@media (max-width: 480px) {
+            .card {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+            body {
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>Kalkulator Deposito</h1>
+        <div id="error" class="error" aria-live="polite"></div>
+        <form id="deposit-form">
+            <label for="amount">Nominal Awal</label>
+            <input type="text" id="amount" placeholder="Contoh: Rp 10.000.000" autofocus />
+
+            <label for="rate">Bunga Tahunan (%)</label>
+            <input type="number" id="rate" step="0.01" min="0" value="5.5" />
+
+            <label for="months">Durasi (bulan)</label>
+            <select id="months">
+                <option value="1">1 bulan (1/12 tahun)</option>
+                <option value="3">3 bulan (1/4 tahun)</option>
+                <option value="6">6 bulan (1/2 tahun)</option>
+                <option value="12" selected>12 bulan (1 tahun)</option>
+                <option value="36">36 bulan (3 tahun)</option>
+                <option value="60">60 bulan (5 tahun)</option>
+                <option value="120">120 bulan (10 tahun)</option>
+                <option value="180">180 bulan (15 tahun)</option>
+                <option value="240">240 bulan (20 tahun)</option>
+            </select>
+
+            <label for="tax">Pajak Bunga (%)</label>
+            <input type="number" id="tax" value="20" min="0" max="100" />
+
+            <label for="type">Jenis Perhitungan</label>
+            <select id="type">
+                <option value="flat">Flat</option>
+                <option value="compound">Compound (bunga berbunga)</option>
+            </select>
+
+            <button type="submit">Hitung Sekarang</button>
+            <button type="button" id="openSimpleCalcBtn" class="button">Kalkulator Sederhana</button>
+        </form>
+
+        <section class="result-box" id="result" aria-live="polite"></section>
+
+        <div id="popupCalc" class="modal">
+            <div class="modal-content">
+                <h2>Kalkulator Sederhana</h2>
+                <input type="text" id="simpleInput" placeholder="Contoh: 10+5*2/2" />
+                <div class="modal-buttons">
+                    <button onclick="calculateSimple()">= Hitung</button>
+                    <button class="btn-close" onclick="closeCalc()">Tutup</button>
+                </div>
+                <div id="simpleResult" class="modal-result"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const $ = id => document.getElementById(id);
+
+        const amountInput = $('amount');
+        const rateInput = $('rate');
+        const monthsSelect = $('months');
+        const taxInput = $('tax');
+        const typeSelect = $('type');
+        const errorBox = $('error');
+        const resultBox = $('result');
+        const openSimpleCalcBtn = $('openSimpleCalcBtn');
+        const popupCalc = $('popupCalc');
+        const simpleInput = $('simpleInput');
+        const simpleResult = $('simpleResult');
+
+        window.addEventListener('load', () => amountInput.focus());
+
+        amountInput.addEventListener('input', e => {
+            const onlyDigits = e.target.value.replace(/\D/g, '');
+            e.target.value = onlyDigits ? formatRupiah(onlyDigits): '';
+            clearResultsAndErrors();
+        });
+
+        [rateInput, monthsSelect, taxInput, typeSelect].forEach(input => {
+            input.addEventListener('input', clearResultsAndErrors);
+            input.addEventListener('change', clearResultsAndErrors);
+        });
+
+        document.getElementById('deposit-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const amount = parseRupiah(amountInput.value);
+            const rate = parseFloat(rateInput.value);
+            const months = parseInt(monthsSelect.value);
+            const tax = parseFloat(taxInput.value);
+            const type = typeSelect.value;
+
+            clearResultsAndErrors();
+
+            if (!amount || amount <= 0 || isNaN(rate) || isNaN(months) || isNaN(tax)) {
+                errorBox.textContent = 'Harap isi semua data dengan benar.';
+                return;
+            }
+
+            const annualRate = rate / 100;
+            const taxRate = tax / 100;
+            let gross = 0;
+
+            if (type === 'flat') {
+                gross = amount * annualRate * (months / 12);
+            } else {
+                const monthlyRate = annualRate / 12;
+                gross = amount * (Math.pow(1 + monthlyRate, months) - 1);
+            }
+
+            const net = gross * (1 - taxRate);
+            const finalAmount = amount + net;
+
+            resultBox.innerHTML = `
+            <p><strong>Hasil Perhitungan:</strong></p>
+            <p>Bunga Kotor: <strong>${formatIDR(gross)}</strong></p>
+            <p>Bunga Bersih: <strong>${formatIDR(net)}</strong></p>
+            <p>Total Akhir: <strong>${formatIDR(finalAmount)}</strong></p>
+            `;
+        });
+
+        openSimpleCalcBtn.addEventListener('click', () => {
+            popupCalc.style.display = 'flex';
+            simpleInput.value = '';
+            simpleResult.textContent = '';
+            simpleInput.focus();
+        });
+
+        function closeCalc() {
+            popupCalc.style.display = 'none';
+        }
+
+        function calculateSimple() {
+            try {
+                const val = simpleInput.value.replace(/[^-()\d/*+.]/g,
+                    '');
+                if (val) {
+                    const result = eval(val);
+                    simpleResult.textContent = `Hasil: ${result}`;
+                } else {
+                    simpleResult.textContent = 'Input tidak valid.';
+                }
+            } catch {
+                simpleResult.textContent = 'Terjadi kesalahan.';
+            }
+        }
+
+        function parseRupiah(rp) {
+            return parseInt(rp.replace(/\D/g, '')) || 0;
+        }
+
+        function formatRupiah(angka) {
+            let number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split = number_string.split(','),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                const separator = sisa ? '.': '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1]: rupiah;
+            return 'Rp ' + rupiah;
+        }
+
+        function formatIDR(number) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        }
+
+        function clearResultsAndErrors() {
+            errorBox.textContent = '';
+            resultBox.innerHTML = '';
+        }
+    </script>
+</body>
+          </html>
