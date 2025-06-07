@@ -1,4 +1,4 @@
-# Kalkulator Deposito
+# [Kalkulator Deposito](https://nelsenniko.github.io/kalkulator-deposito/)
 
 Sebuah aplikasi web sederhana untuk menghitung bunga deposito dengan pilihan perhitungan bunga flat atau bunga majemuk (compound interest).
 
@@ -18,7 +18,7 @@ Sebuah aplikasi web sederhana untuk menghitung bunga deposito dengan pilihan per
 ---
 
 ## Cara Penggunaan
-
+0. Buka Aplikasi [Kalkulator Deposito](https://nelsenniko.github.io/kalkulator-deposito/)
 1. Isi **Nominal Awal** dengan jumlah uang yang ingin didepositokan (misal: Rp 10.000.000).
 2. Isi **Bunga Tahunan (%)** sesuai dengan suku bunga yang ditawarkan bank.
 3. Pilih **Durasi (bulan)** deposito (misal: 3 bulan = 1/4 tahun).
