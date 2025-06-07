@@ -39,7 +39,7 @@ Sebuah aplikasi web sederhana untuk menghitung bunga deposito dengan pilihan per
 
 ## Struktur File
 
-- `index.html` : File utama yang berisi seluruh kode HTML, CSS, dan JavaScript.
+- [`index.html`](https://nelsenniko.github.io/kalkulator-deposito/) : File utama yang berisi seluruh kode HTML, CSS, dan JavaScript.
 
 ---
 
